@@ -48,8 +48,6 @@ ExportedObj/
 *.pdb.meta
 *.mdb.meta
 
-# Unity3D generated file on crash reports
-sysinfo.txt
 
 # Builds
 *.apk
@@ -58,7 +56,3 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-Assets/MRTK/HoloToolkit/UX/Fonts/uzura SDF.asset
-Assets/MRTK/HoloToolkit/UX/Fonts/uzura SDF.asset.meta
-Assets/MRTK/HoloToolkit/UX/Fonts/uzura.ttf
-Assets/MRTK/HoloToolkit/UX/Fonts/uzura.ttf.meta
