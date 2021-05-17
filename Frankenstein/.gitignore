@@ -10,6 +10,7 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
+# test
 /[Pp]ackages/packages-lock.json
 /[Pp]rojectSettings/SceneTemplateSettings.json
 
