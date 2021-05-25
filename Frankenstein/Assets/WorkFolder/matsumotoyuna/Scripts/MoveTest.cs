@@ -11,10 +11,12 @@ public class MoveTest : MonoBehaviour
 
     Rigidbody2D rigid2D;
     float jumpForce = 300.0f;
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Jump = false;
     }
+    //ª°‚É’…‚­‚Ü‚ÅƒWƒƒƒ“ƒv‚³‚¹‚È‚¢ƒ}ƒ“
 
     // Start is called before the first frame update
     void Start()
