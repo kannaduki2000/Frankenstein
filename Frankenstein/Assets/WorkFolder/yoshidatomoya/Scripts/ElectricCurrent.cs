@@ -60,7 +60,7 @@ public class ElectricCurrent : MonoBehaviour
             // 電気を充電
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                // HPを減らす
+                // HPを増やす
                 HP += 30;
                 Debug.Log(HP);
                 // ここに処理を加える
@@ -98,7 +98,7 @@ public class ElectricCurrent : MonoBehaviour
 ＠電流関係
     電気を流す〇
 　　電気を充電する〇
-　　電気を流せるかどうかの判定
+　　電気を流せるかどうかの判定〇
 　　　流せるなら流せる対象の状態（電気を流すor充電）を取得〇
 　　 　種類に合わせた処理をする
 　　　　（敵ならその敵に応じた電気を消費して追従）
