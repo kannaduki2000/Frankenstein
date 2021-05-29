@@ -5,7 +5,21 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
+
+    public GameObject player;
+    public GameObject enemy;
+
     private Rigidbody2D rb2d;
+
+    public float stopDistance;         //止まるときの距離
+
+    private bool isFollowing = true;   //追従するかどうか
+
+    public MoveTest mt;
+
+    public bool enemyMove = true;      //エネミーの動き
+    private bool Follow = false;
+
     private float x_val;
     private float speed;
 
@@ -39,6 +53,10 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //箱を用意して、その中にY座標を入れる
+        Vector2 targetPos = player.transform.position;
+        targetPos.y = transform.position.y;
+
         /*プレイヤーの移動入力処理--------------------------------------------*/
         //矢印キーが押された場合
         x_val = Input.GetAxis("Horizontal");
@@ -49,6 +67,85 @@ public class PlayerController : MonoBehaviour
             jump();
         }
         /*-----------------------------------------------------------------*/
+
+        //距離
+        float distance = Vector2.Distance(transform.position, player.transform.position);
+
+        if (isFollowing)
+        {
+            //if(間の距離が止まるときの距離以上なら?)
+            if (distance > stopDistance)
+            {
+                transform.position = Vector3.MoveTowards(transform.position,
+                new Vector2(player.transform.position.x, enemy.transform.position.y),
+                speed * Time.deltaTime);
+            }
+            // 右
+            if (player.transform.position.x < transform.position.x)
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+            // 左
+            else if (player.transform.position.x > transform.position.x)
+            {
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+            //ジャンプ
+            if (jumpFlg == false && Input.GetKeyDown(KeyCode.Space))
+            {
+                this.rb2d.AddForce(transform.up * this.jumpingPower);
+                jumpFlg = !jumpFlg;
+            }
+        }
+
+        /*エネミーの動き用----------------------------------------------*/
+        if (enemyMove == false)
+        {
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                this.transform.Translate(-0.01f, 0.0f, 0.0f);
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                this.transform.Translate(0.01f, 0.0f, 0.0f);
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+
+            if (jumpFlg == false && Input.GetKeyDown(KeyCode.Space))
+            {
+                this.rb2d.AddForce(transform.up * this.jumpingPower);
+                jumpFlg = !jumpFlg;
+            }
+        }
+        /*-----------------------------------------------------------------*/
+
+        /*操作の切り替え処理-----------------------------------------------*/
+        //1回目の切り替え時の動き
+        if (Input.GetKeyDown(KeyCode.Return) && Follow == false)
+        {
+            mt.playerMove = !mt.playerMove;
+            Following();
+            enemyMove = !enemyMove;
+            Follow = !Follow;
+        }
+        //2回目の切り替え時
+        //この状態だと何回Enter押してもプレイヤーしか動かんで
+        else if (Input.GetKeyDown(KeyCode.Return) && Follow == true)
+        {
+            isFollowing = false;
+            enemyMove = true;
+            mt.playerMove = false;
+        }
+        /*--------------------------------------------------------------------*/
+
+        //Followを切り替えることでもう一度追従や切り替えができるお
+        if (Follow == true && Input.GetKeyDown(KeyCode.Delete))
+        {
+            isFollowing = true;
+            Follow = !Follow;
+        }
 
         /*拾う、投げる処理----------------------------------------------------*/
         if (aa)
@@ -88,29 +185,30 @@ public class PlayerController : MonoBehaviour
         /*体力の減増処理-----------------------------------------------------------------*/
         if (touchFlag)
         {
-            //Debug.Log("aaa");
             // 表示
             hpBar.SetActive(true);
 
             // 電気を流す
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                // HPを減らす
-                HP -= 30;
+                HP -= 30;// HPを減らす
                 Debug.Log(HP);
                 // ここに処理を加える
             }
             // 電気を充電
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                // HPを増やす
-                HP += 30;
+                HP += 30;// HPを増やす
                 Debug.Log(HP);
                 // ここに処理を加える
             }
-
         }
         /*-----------------------------------------------------------------*/
+    }
+
+    public void Following()
+    {
+        isFollowing = !isFollowing;
     }
 
     /*プレイヤーの方向処理--------------------------------------------------*/

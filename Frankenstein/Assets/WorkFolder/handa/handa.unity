@@ -253,12 +253,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55866572eadf99545b3835348424fc5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputSpeed: 7
-  jumpingPower: 400
+  player: {fileID: 1424296311}
+  enemy: {fileID: 0}
+  stopDistance: 0
+  mt: {fileID: 0}
+  enemyMove: 1
+  inputSpeed: 20
+  jumpingPower: 2500
   CollisionLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 64
   Speed: {x: 1, y: 1}
+  hpBar: {fileID: 0}
 --- !u!50 &1424296313
 Rigidbody2D:
   serializedVersion: 4
@@ -274,7 +280,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 10
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -399,9 +405,9 @@ GameObject:
   - component: {fileID: 1900941319}
   - component: {fileID: 1900941321}
   - component: {fileID: 1900941322}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: ground
-  m_TagString: Floar
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
