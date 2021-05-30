@@ -1,24 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D.IK;
 
 public class PlayerController : MonoBehaviour
 {
-
-
-    public GameObject player;
-    public GameObject enemy;
-
     private Rigidbody2D rb2d;
 
-    public float stopDistance;         //止まるときの距離
-
-    private bool isFollowing = true;   //追従するかどうか
-
-    public MoveTest mt;
-
-    public bool enemyMove = true;      //エネミーの動き
-    private bool Follow = false;
+    public GameObject Player;
 
     private float x_val;
     private float speed;
@@ -43,6 +32,8 @@ public class PlayerController : MonoBehaviour
 
     public GameObject hpBar;
 
+    public bool player_Move = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -53,101 +44,23 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //箱を用意して、その中にY座標を入れる
-        Vector2 targetPos = player.transform.position;
-        targetPos.y = transform.position.y;
 
         /*プレイヤーの移動入力処理--------------------------------------------*/
-        //矢印キーが押された場合
-        x_val = Input.GetAxis("Horizontal");
-        jumpFlg = IsCollision();
-        //Spaceキーが押された場合
-        if (Input.GetKeyDown("space") && jumpFlg)
+        if(player_Move == false)
         {
-            jump();
+            //矢印キーが押された場合
+            x_val = Input.GetAxis("Horizontal");
+            jumpFlg = IsCollision();
+            //Spaceキーが押された場合
+            if (Input.GetKeyDown("space") && jumpFlg)
+            {
+                jump();
+            }
         }
+        
         /*-----------------------------------------------------------------*/
 
-        //距離
-        float distance = Vector2.Distance(transform.position, player.transform.position);
-
-        if (isFollowing)
-        {
-            //if(間の距離が止まるときの距離以上なら?)
-            if (distance > stopDistance)
-            {
-                transform.position = Vector3.MoveTowards(transform.position,
-                new Vector2(player.transform.position.x, enemy.transform.position.y),
-                speed * Time.deltaTime);
-            }
-            // 右
-            if (player.transform.position.x < transform.position.x)
-            {
-                transform.localScale = new Vector3(-1, 1, 1);
-            }
-            // 左
-            else if (player.transform.position.x > transform.position.x)
-            {
-                transform.localScale = new Vector3(1, 1, 1);
-            }
-            //ジャンプ
-            if (jumpFlg == false && Input.GetKeyDown(KeyCode.Space))
-            {
-                this.rb2d.AddForce(transform.up * this.jumpingPower);
-                jumpFlg = !jumpFlg;
-            }
-        }
-
-        /*エネミーの動き用----------------------------------------------*/
-        if (enemyMove == false)
-        {
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                this.transform.Translate(-0.01f, 0.0f, 0.0f);
-                transform.localScale = new Vector3(-1, 1, 1);
-            }
-
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                this.transform.Translate(0.01f, 0.0f, 0.0f);
-                transform.localScale = new Vector3(1, 1, 1);
-            }
-
-            if (jumpFlg == false && Input.GetKeyDown(KeyCode.Space))
-            {
-                this.rb2d.AddForce(transform.up * this.jumpingPower);
-                jumpFlg = !jumpFlg;
-            }
-        }
-        /*-----------------------------------------------------------------*/
-
-        /*操作の切り替え処理-----------------------------------------------*/
-        //1回目の切り替え時の動き
-        if (Input.GetKeyDown(KeyCode.F) && Follow == false)
-        {
-            mt.playerMove = !mt.playerMove;
-            Following();
-            enemyMove = !enemyMove;
-            Follow = !Follow;
-        }
-        //2回目の切り替え時
-        //この状態だと何回Enter押してもプレイヤーしか動かんで
-        else if (Input.GetKeyDown(KeyCode.Return) && Follow == true)
-        {
-            isFollowing = false;
-            enemyMove = true;
-            mt.playerMove = false;
-        }
-        /*--------------------------------------------------------------------*/
-
-        //Followを切り替えることでもう一度追従や切り替えができるお
-        if (Follow == true && Input.GetKeyDown(KeyCode.Delete))
-        {
-            isFollowing = true;
-            Follow = !Follow;
-        }
-
-        /*拾う、投げる処理----------------------------------------------------*/
+        /*拾う、投げるの入力処理----------------------------------------------------*/
         if (aa)
         {
             if (Input.GetKey(KeyCode.LeftShift))
@@ -204,11 +117,6 @@ public class PlayerController : MonoBehaviour
             }
         }
         /*-----------------------------------------------------------------*/
-    }
-
-    public void Following()
-    {
-        isFollowing = !isFollowing;
     }
 
     /*プレイヤーの方向処理--------------------------------------------------*/
