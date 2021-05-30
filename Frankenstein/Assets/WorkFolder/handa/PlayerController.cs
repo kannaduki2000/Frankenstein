@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask CollisionLayer;
     private bool jumpFlg = false;
 
-    public Vector2 Speed = new Vector2(1, 1);   //速度
+    //public Vector2 Speed = new Vector2(1, 1);   //速度
     private int presskeyFrames = 0;             //長押しフレーム数
     private int PressLong = 300;                 //長押し判定の閾値
     private int PressShort = 100;                //軽く押した判定の閾値
@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour
 
         /*操作の切り替え処理-----------------------------------------------*/
         //1回目の切り替え時の動き
-        if (Input.GetKeyDown(KeyCode.Return) && Follow == false)
+        if (Input.GetKeyDown(KeyCode.F) && Follow == false)
         {
             mt.playerMove = !mt.playerMove;
             Following();
@@ -196,7 +196,7 @@ public class PlayerController : MonoBehaviour
                 // ここに処理を加える
             }
             // 電気を充電
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.RightShift))
             {
                 HP += 30;// HPを増やす
                 Debug.Log(HP);
@@ -295,4 +295,21 @@ public class PlayerController : MonoBehaviour
         }
     }
     /*-------------------------------------------------------------------*/
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "HomeApp")
+        {
+            touchFlag = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "HomeApp")
+        {
+            touchFlag = false;
+            hpBar.SetActive(false);
+        }
+    }
 }
