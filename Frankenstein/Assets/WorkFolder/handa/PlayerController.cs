@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D.IK;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public float jumpingPower;
 
     public LayerMask CollisionLayer;
+    [SerializeField] private LayerMask enemyLayer; // モック版熊倉:敵のLayer取得用
     private bool jumpFlg = false;
 
     //public Vector2 Speed = new Vector2(1, 1);   //速度
@@ -26,8 +27,10 @@ public class PlayerController : MonoBehaviour
     private bool aa = false;
     Item item;
 
-    int HP = 100;
-    private bool touchFlag = false;
+    [SerializeField] int maxHP = 100;
+    [SerializeField] float HP = 100;
+    [SerializeField] private bool touchFlag = false;
+    [SerializeField] private bool enemyTouchFlag = false; // モック版熊倉:フラグ追加
     public GameObject hpBar;
 
     public bool player_Move = false;
@@ -38,17 +41,36 @@ public class PlayerController : MonoBehaviour
 
     //public EnemyController enemyCon;
 
+    // モック版熊倉:GetCompornent重いんで直で取得、ここ敵の数増えるはずなので書き換えること
+    [SerializeField] private EnemyController enemyCon;
+    [SerializeField] private Image hp;
+
     // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
 
-        enemy = GameObject.Find("Enemy");
+        // 熊倉:ここいらないと思うで
+        //enemy = GameObject.Find("Enemy");
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        // モック版熊倉:LayerでやってたっぽいのでLinecastで取得
+        if (GetEnemyLayer())
+        {
+            if (enemyCon.isCharging)
+            {
+                enemyTouchFlag = true;
+            }
+        }
+        else
+        {
+            enemyTouchFlag = false;
+        }
+
 
         /*プレイヤーの移動入力処理--------------------------------------------*/
         if(player_Move == false)
@@ -101,7 +123,7 @@ public class PlayerController : MonoBehaviour
         /*-----------------------------------------------------------------*/
 
         /*体力の減増処理-----------------------------------------------------------------*/
-        if (touchFlag)
+        if (touchFlag || enemyTouchFlag)
         {
             // 表示
             hpBar.SetActive(true);
@@ -110,13 +132,21 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 HP -= 30;// HPを減らす
+                // モック版熊倉:HPバー
+                hp.fillAmount = HP / maxHP;
                 Debug.Log(HP);
-                // ここに処理を加える
-
-                if(enemyFollowFlg)
+                
+                // モック版熊倉:追加しますた
+                // 触れている物がEnemyの場合
+                if (enemyTouchFlag)
                 {
-                    
+                    // 追従開始
+                    enemyCon.isFollowing = true;
+                    // 充電したのでこれ以上充電出来ないように
+                    enemyCon.isCharging = false;
+                    hpBar.SetActive(false);
                 }
+                
             }
             // 電気を充電
             if (Input.GetKeyDown(KeyCode.RightShift))
@@ -130,6 +160,11 @@ public class PlayerController : MonoBehaviour
 
                 }
             }
+        }
+        // モック版熊倉:HP表示するObjectから離れたら強制的にHPバーを非表示にします
+        else
+        {
+            hpBar.SetActive(false);
         }
         /*-----------------------------------------------------------------*/
     }
@@ -173,11 +208,25 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 left_SP = transform.position - Vector3.right * 0.2f;
         Vector3 right_SP = transform.position + Vector3.right * 0.2f;
-        Vector3 EP = transform.position - Vector3.up * 0.1f;
+        Vector3 EP = transform.position - Vector3.up * 1.3f;
         return Physics2D.Linecast(left_SP, EP, CollisionLayer)
                || Physics2D.Linecast(right_SP, EP, CollisionLayer);
     }
     /*-------------------------------------------------------------------*/
+
+    /// <summary>
+    /// 敵のレイヤーがあるかどうかを取得する関数
+    /// </summary>
+    /// <returns></returns>
+    private bool GetEnemyLayer()
+    {
+        Vector3 left = transform.position + Vector3.up * 1f - Vector3.right * 3.5f;
+        Vector3 right = transform.position + Vector3.up * 1f + Vector3.right * 3.5f;
+        // ここのコメント消せばデバッグ用の線が見えます
+        //Debug.DrawLine(left, right);
+        return Physics2D.Linecast(left, right, enemyLayer);
+    }
+
 
     /*---------------------------*/
     private void OnCollisionExit2D(Collision2D collision)
@@ -225,8 +274,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.tag == "HomeApp")
         {
             touchFlag = true;
-        }
-
+        }   
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -236,7 +284,9 @@ public class PlayerController : MonoBehaviour
             touchFlag = false;
             hpBar.SetActive(false);
         }
+
         
+
     }
     /*-------------------------------------------------------------------*/
 

@@ -8,13 +8,15 @@ public class EnemyController : MonoBehaviour
     public GameObject enemy;
     public float stopDistance;         //止まるときの距離
 
-    private bool isFollowing = true;   //追従するかどうか
-
     public PlayerController mt;
 
+    // モック版熊倉:充電可能かどうかを判別するフラグ
+    public bool isCharging = true; // HPが0になったらtrueにするようにしてください
+
+    public bool isFollowing = true;   //追従するかどうか
     public bool enemyMove = true;      //エネミーの動き
     private bool enemyJump = false;         //ジャンプ用
-    private bool Follow = false;       //二度目の入力でのついてくるか否か
+    [SerializeField] private bool Follow = false;       //二度目の入力でのついてくるか否か
 
     Rigidbody2D rb2d;
 
