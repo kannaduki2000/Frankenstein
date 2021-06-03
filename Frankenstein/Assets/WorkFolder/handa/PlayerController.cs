@@ -31,7 +31,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float HP = 100;
     [SerializeField] private bool touchFlag = false;
     [SerializeField] private bool enemyTouchFlag = false; // モック版熊倉:フラグ追加
-    public GameObject hpBar;
+    public GameObject hpCanvas;
+    private float hpCanvasScale_x;
 
     public bool player_Move = false;
 
@@ -49,7 +50,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
-
+        hpCanvasScale_x = hpCanvas.transform.localScale.x;
         // 熊倉:ここいらないと思うで
         //enemy = GameObject.Find("Enemy");
     }
@@ -57,7 +58,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         // モック版熊倉:LayerでやってたっぽいのでLinecastで取得
         if (GetEnemyLayer())
         {
@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour
         if (touchFlag || enemyTouchFlag)
         {
             // 表示
-            hpBar.SetActive(true);
+            hpCanvas.SetActive(true);
 
             // 電気を流す
             if (Input.GetKeyDown(KeyCode.Return))
@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour
                     enemyCon.isFollowing = true;
                     // 充電したのでこれ以上充電出来ないように
                     enemyCon.isCharging = false;
-                    hpBar.SetActive(false);
+                    hpCanvas.SetActive(false);
                 }
                 
             }
@@ -164,7 +164,7 @@ public class PlayerController : MonoBehaviour
         // モック版熊倉:HP表示するObjectから離れたら強制的にHPバーを非表示にします
         else
         {
-            hpBar.SetActive(false);
+            hpCanvas.SetActive(false);
         }
         /*-----------------------------------------------------------------*/
     }
@@ -182,12 +182,18 @@ public class PlayerController : MonoBehaviour
         {
             speed = inputSpeed;
             transform.localScale = new Vector3(1, 1, 1);//右を向を向く
+            // モック版熊倉:HPバーの向きの調整
+            Vector3 hpTransform = new Vector3(hpCanvasScale_x, hpCanvas.transform.localScale.y, hpCanvas.transform.localScale.z);
+            hpCanvas.transform.localScale = hpTransform;
         }
         //左に移動
         else if (x_val < 0)
         {
             speed = inputSpeed * -1;
             transform.localScale = new Vector3(-1, 1, 1);//左を向を向く
+            // モック版熊倉:HPバーの向きの調整
+            Vector3 hpTransform = new Vector3(-hpCanvasScale_x, hpCanvas.transform.localScale.y, hpCanvas.transform.localScale.z);
+            hpCanvas.transform.localScale = hpTransform;
         }
         // キャラクターを移動 Vextor2(x軸スピード、y軸スピード(元のまま))
         rb2d.velocity = new Vector2(speed, rb2d.velocity.y);
@@ -282,7 +288,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.tag == "HomeApp")
         {
             touchFlag = false;
-            hpBar.SetActive(false);
+            hpCanvas.SetActive(false);
         }
 
         
