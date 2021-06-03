@@ -8,8 +8,6 @@ public class EnemyController : MonoBehaviour
     public GameObject enemy;
     public float stopDistance;         //止まるときの距離
 
-    private float x_val;
-
     private bool isFollowing = true;   //追従するかどうか
 
     public PlayerController mt;
@@ -82,14 +80,6 @@ public class EnemyController : MonoBehaviour
         //エネミーの動き用
         if (enemyMove == false)
         {
-            ////矢印キーが押された場合
-            //x_val = Input.GetAxis("Horizontal");
-            //enemyJump = IsCollision();
-            ////Spaceキーが押された場合
-            //if (Input.GetKeyDown("space") && enemyJump)
-            //{
-            //    jump();
-            //}
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 this.transform.Translate(-0.01f, 0.0f, 0.0f);
@@ -154,20 +144,4 @@ public class EnemyController : MonoBehaviour
         enemyMove = !enemyMove;
     }
 
-    //void jump()
-    //{
-    //    rb2d.AddForce(Vector2.up * jumpingPower);
-    //    enemyJump = false;
-    //}
-
-    //bool IsCollision()
-    //{
-    //    Vector3 left_SP = transform.position - Vector3.right * 0.2f;
-    //    Vector3 right_SP = transform.position + Vector3.right * 0.2f;
-    //    Vector3 EP = transform.position - Vector3.up * 0.1f;
-    //    //Debug.DrawLine(left_SP, EP);
-    //    //Debug.DrawLine(right_SP, EP);
-    //    return Physics2D.Linecast(left_SP, EP, CollisionLayer)
-    //           || Physics2D.Linecast(right_SP, EP, CollisionLayer);
-    //}
 }

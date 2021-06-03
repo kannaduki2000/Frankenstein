@@ -27,18 +27,23 @@ public class PlayerController : MonoBehaviour
     Item item;
 
     int HP = 100;
-
     private bool touchFlag = false;
-
     public GameObject hpBar;
 
     public bool player_Move = false;
 
+    private bool enemyFollowFlg = false;
+
+    public GameObject enemy;
+
+    //public EnemyController enemyCon;
 
     // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+
+        enemy = GameObject.Find("Enemy");
     }
 
     // Update is called once per frame
@@ -107,6 +112,11 @@ public class PlayerController : MonoBehaviour
                 HP -= 30;// HPを減らす
                 Debug.Log(HP);
                 // ここに処理を加える
+
+                if(enemyFollowFlg)
+                {
+                    
+                }
             }
             // 電気を充電
             if (Input.GetKeyDown(KeyCode.RightShift))
@@ -114,6 +124,11 @@ public class PlayerController : MonoBehaviour
                 HP += 30;// HPを増やす
                 Debug.Log(HP);
                 // ここに処理を加える
+
+                if(enemyFollowFlg)
+                {
+
+                }
             }
         }
         /*-----------------------------------------------------------------*/
@@ -204,12 +219,14 @@ public class PlayerController : MonoBehaviour
     }
     /*-------------------------------------------------------------------*/
 
+    /*HPバーを表示するタグの判定-----------------------------------------*/
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "HomeApp")
         {
             touchFlag = true;
         }
+
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -219,5 +236,8 @@ public class PlayerController : MonoBehaviour
             touchFlag = false;
             hpBar.SetActive(false);
         }
+        
     }
+    /*-------------------------------------------------------------------*/
+
 }
